@@ -5,7 +5,7 @@
 // https://www.prisma.io/docs/orm/prisma-migrate
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -17,8 +17,67 @@ generator client {
 // Define your own datamodels here and run `yarn redwood prisma migrate dev`
 // to create migrations for them and apply to your dev DB.
 // TODO: Please remove the following example:
-model UserExample {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+model User {
+  id                     Int           @id @default(autoincrement())
+  email                  String        @unique
+  name                   String?
+  hashedPassword         String
+  salt                   String
+  resetToken             String?
+  resetTokenExpiresAt    DateTime?
+  publicAgents           PublicAgent[]
+  citizen                Citizen?      @relation(name: "citizenUser")
+  citizensRegisteredByMe Citizen[]     @relation(name: "citizensRegisteredByMe")
+  roles                  Role[]
+}
+
+model PublicAgent {
+  id                 Int      @id @default(autoincrement())
+  displayName        String
+  institutionalEmail String
+  instance           Instance @relation(fields: [instanceId], references: [id])
+  instanceId         Int
+  user               User     @relation(fields: [userId], references: [id])
+  userId             Int
+}
+
+model Instance {
+  id              Int           @id @default(autoincrement())
+  uuid            String        @unique @default(uuid())
+  name            String
+  domain          String        @unique
+  publicAgents    PublicAgent[]
+  logo            String        @default("")
+  citizensCreated Citizen[]
+  colorScheme     String        @default("1345AA")
+}
+
+model Citizen {
+  id                   Int         @id @default(autoincrement())
+  createdByInstance    Instance    @relation(fields: [createdByInstanceId], references: [id])
+  createdByInstanceId  Int
+  legalResponsibleName String?
+  legalResponsibleCpf  String?
+  companyName          String?
+  fantasyName          String?
+  cnpj                 String?     @unique @db.VarChar(14)
+  userId               Int         @unique
+  user                 User        @relation(fields: [userId], references: [id], name: "citizenUser")
+  type                 CitizenType @default(PF)
+  createdBy            User?       @relation(fields: [createdById], references: [id], name: "citizensRegisteredByMe")
+  createdById          Int?
+  createdAt            DateTime    @default(now())
+  lastAccess           DateTime?
+}
+
+model Role {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  description String
+  users       User[]
+}
+
+enum CitizenType {
+  PF
+  PJ
 }
