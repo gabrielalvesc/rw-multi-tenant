@@ -35,5 +35,6 @@
     "../.redwood/types/includes/web-*",
     "../types",
     "./types"
-  ]
+  ],
+  "moduleResolution": ["node_modules", "node"]
 }

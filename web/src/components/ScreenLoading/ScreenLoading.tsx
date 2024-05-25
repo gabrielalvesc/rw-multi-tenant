@@ -3,17 +3,23 @@ import { Box, CircularProgress } from '@chakra-ui/react'
 const ScreenLoading = () => {
   return (
     <Box
-      position={'absolute'}
-      backgroundColor={'rgba(0,0,0,0.685'}
-      w={'100%'}
-      h={'100vh'}
-      top={0}
-      left={0}
-      zIndex={9998}
-      display={'block'}
-      overflow={'hidden'}
+      style={{
+        position: 'absolute',
+        backgroundColor: 'rgb(0 0 0 / 82%)',
+        height: '100vh',
+        width: '100%',
+        overflow: 'hidden',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
     >
-      <CircularProgress isIndeterminate color="blue.300" />
+      <CircularProgress
+        isIndeterminate
+        color="blue.300"
+        thickness="4px"
+        size="120px"
+      />
     </Box>
   )
 }

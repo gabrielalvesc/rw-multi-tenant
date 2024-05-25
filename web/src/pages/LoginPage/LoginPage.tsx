@@ -25,8 +25,7 @@ const LOGIN_TYPE = {
 }
 
 const LoginPage = () => {
-  const { isAuthenticated, logIn, getToken, reauthenticate, loading } =
-    useAuth()
+  const { isAuthenticated, logIn, loading } = useAuth()
   const { tenant } = useTenant()
   const { pathname } = useLocation()
 
