@@ -59,7 +59,7 @@ const AdminHeaderContent = () => {
     if (tenant) {
       window.location.href = `http://admin.sogov.com.br:8910/tecnico`
     } else {
-      navigate(routes.home())
+      navigate(routes.technical())
     }
   }
 
@@ -95,7 +95,7 @@ const AdminHeaderContent = () => {
         colorScheme="blue"
         variant="ghost"
         as={Link}
-        to={routes.home()}
+        to={routes.technical()}
         isActive={isActive('/external')}
         _active={{ backgroundColor: 'blue.50', fontWeight: 600 }}
         fontWeight={500}

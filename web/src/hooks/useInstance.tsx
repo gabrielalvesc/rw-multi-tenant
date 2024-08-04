@@ -8,6 +8,7 @@ export const GET_INSTANCE_DOMAIN = gql`
       logo
       domain
       colorScheme
+      coatOfArms
     }
   }
 `

@@ -29,10 +29,10 @@ import { useTenant } from 'src/hooks/useTenant'
 import AdminHeaderContent from '../AdminHeaderContent/AdminHeaderContent'
 
 interface MobileProps extends FlexProps {
-  onOpen: () => void
+  open: boolean
 }
 
-const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+const MobileNav = ({ open, ...rest }: MobileProps) => {
   const theme = useTheme()
   const { hasRole, logOut, currentUser } = useAuth()
   const { enviroment } = useEnviroment()
@@ -42,7 +42,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   return (
     <>
       <Flex
-        ml={{ base: 0, md: enviroment?.id !== 3 ? 60 : 0 }}
+        transition="1s ease"
+        ml={{ base: 0, md: enviroment?.id !== 3 ? (open ? 60 : 20) : 0 }}
         px={{ base: 4, md: 4 }}
         height="16"
         alignItems="center"
@@ -58,14 +59,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         }}
         {...rest}
       >
-        <IconButton
-          display={{ base: 'flex', md: 'none' }}
-          onClick={onOpen}
-          variant="outline"
-          aria-label="open menu"
-          icon={<FiMenu />}
-        />
-
         {currentUser && enviroment?.id === 3 && (
           <IconButton
             isRound
@@ -180,8 +173,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   )
 }
 
-const Header = ({ onOpen }: MobileProps) => {
-  return <MobileNav onOpen={onOpen} />
+const Header = ({ open }: MobileProps) => {
+  return <MobileNav open={open} />
 }
 
 export default Header

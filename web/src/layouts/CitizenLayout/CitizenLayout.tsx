@@ -6,6 +6,7 @@ import {
   Drawer,
   DrawerContent,
   useDisclosure,
+  useBoolean,
 } from '@chakra-ui/react'
 
 import Header from 'src/components/Header/Header'
@@ -16,7 +17,7 @@ import {
 } from 'src/providers/EnviromentProvider'
 
 const CitizenLayout = ({ children }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [open, setOpen] = useBoolean(true)
   const { setEnviroment } = useEnviroment()
 
   useEffect(() => {
@@ -29,18 +30,11 @@ const CitizenLayout = ({ children }) => {
         onClose={() => onClose}
         display={{ base: 'none', md: 'block' }}
       /> */}
-      <Drawer
-        isOpen={isOpen}
-        placement="left"
-        onClose={onClose}
-        returnFocusOnClose={false}
-        onOverlayClick={onClose}
-        size="full"
-      >
+      <Drawer placement="left" returnFocusOnClose={false} size="full">
         <DrawerContent>{/* <Sidebar onClose={onClose} /> */}</DrawerContent>
       </Drawer>
       {/* mobilenav */}
-      <Header onOpen={onOpen} />
+      <Header open={open} />
       <Box ml={{ base: 0, md: 60 }} p="4">
         {/* Content */}
         {children}

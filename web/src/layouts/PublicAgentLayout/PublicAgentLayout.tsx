@@ -6,7 +6,9 @@ import {
   Drawer,
   DrawerContent,
   useDisclosure,
+  useBoolean,
 } from '@chakra-ui/react'
+import { FaCircleChevronLeft, FaCircleChevronRight } from 'react-icons/fa6'
 
 import Header from 'src/components/Header/Header'
 import Sidebar from 'src/components/Sidebar/Sidebar'
@@ -19,7 +21,7 @@ import {
 
 const PublicAgentLayout = ({ children }) => {
   useInstanceGuard()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [open, setOpen] = useBoolean(true)
   const { setEnviroment } = useEnviroment()
 
   useEffect(() => {
@@ -27,26 +29,44 @@ const PublicAgentLayout = ({ children }) => {
   }, [])
 
   return (
-    <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
-      <Sidebar
-        onClose={() => onClose}
-        display={{ base: 'none', md: 'block' }}
-      />
-      <Drawer
-        isOpen={isOpen}
-        placement="left"
-        onClose={onClose}
-        returnFocusOnClose={false}
-        onOverlayClick={onClose}
-        size="full"
+    <Box
+      position={'relative'}
+      minH="100vh"
+      bg={useColorModeValue('gray.100', 'gray.900')}
+    >
+      <Sidebar open={open} display={{ base: 'none', md: 'block' }} />
+      <Box
+        position={'absolute'}
+        borderRadius={'50%'}
+        borderStyle={'solid'}
+        borderWidth={'2px'}
+        borderColor={'gray.100'}
+        display={'flex'}
+        justifyContent={'center'}
+        alignItems={'center'}
+        width={'35px'}
+        height={'35px'}
+        bgColor="gray.100"
+        top={'144px'}
+        transition="1s ease"
+        left={open ? '224px' : '64px'}
+        cursor={'pointer'}
+        onClick={() => setOpen.toggle()}
       >
+        {open ? (
+          <FaCircleChevronLeft color="#33A8FA" size={'26px'} />
+        ) : (
+          <FaCircleChevronRight color="#33A8FA" size={'26px'} />
+        )}
+      </Box>
+      <Drawer placement="left" returnFocusOnClose={false} size="full">
         <DrawerContent>
-          <Sidebar onClose={onClose} />
+          <Sidebar open={open} />
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
-      <Header onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4">
+      <Header open={open} />
+      <Box transition={'1s ease'} ml={{ base: 0, md: open ? 60 : 20 }}>
         {/* Content */}
         {children}
       </Box>

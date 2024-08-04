@@ -12,6 +12,7 @@ interface TenantProps {
   logo: string
   domain: string
   colorScheme: string
+  coatOfArms: string
 }
 
 export const TenantContext = createContext<TenantContextProps | null>(null)

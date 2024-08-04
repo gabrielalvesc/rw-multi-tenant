@@ -50,6 +50,7 @@ model Instance {
   logo            String        @default("")
   citizensCreated Citizen[]
   colorScheme     String        @default("1345AA")
+  coatOfArms      String?
 }
 
 model Citizen {
