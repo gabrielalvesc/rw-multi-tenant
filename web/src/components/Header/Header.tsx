@@ -17,7 +17,8 @@ import {
   useMediaQuery,
   useTheme,
 } from '@chakra-ui/react'
-import { FiMenu, FiBell, FiChevronDown } from 'react-icons/fi'
+import { FaBars } from 'react-icons/fa6'
+import { FiBell, FiChevronDown } from 'react-icons/fi'
 import { IoHomeOutline } from 'react-icons/io5'
 
 import { navigate, routes } from '@redwoodjs/router'
@@ -27,12 +28,14 @@ import { useEnviroment } from 'src/hooks/useEnviroment'
 import { useTenant } from 'src/hooks/useTenant'
 
 import AdminHeaderContent from '../AdminHeaderContent/AdminHeaderContent'
+import SwitchSector from '../SwitchSector/SwitchSector'
 
 interface MobileProps extends FlexProps {
   open: boolean
+  onOpen: () => void
 }
 
-const MobileNav = ({ open, ...rest }: MobileProps) => {
+const MobileNav = ({ open, onOpen, ...rest }: MobileProps) => {
   const theme = useTheme()
   const { hasRole, logOut, currentUser } = useAuth()
   const { enviroment } = useEnviroment()
@@ -53,7 +56,7 @@ const MobileNav = ({ open, ...rest }: MobileProps) => {
         justifyContent={{
           base: 'space-between',
           md:
-            hasRole('admin') || enviroment?.id === 3
+            hasRole('admin') || enviroment?.id === 3 || enviroment?.id === 2
               ? 'space-between'
               : 'flex-end',
         }}
@@ -75,15 +78,29 @@ const MobileNav = ({ open, ...rest }: MobileProps) => {
           />
         )}
 
+        {enviroment?.id !== 3 && (
+          <IconButton
+            display={{ base: 'flex', md: 'none' }}
+            onClick={() => onOpen()}
+            variant="outline"
+            aria-label="open menu"
+            size={'lg'}
+            borderColor={'transparent'}
+            icon={<FaBars color={theme.colors.blue[600]} size={'20px'} />}
+          />
+        )}
+
+        {enviroment?.id === 2 && <SwitchSector />}
+
         <Image
           display={{
-            base: 'flex',
+            base: 'none',
             md: enviroment?.id !== 3 || currentUser ? 'none' : 'flex',
           }}
           src={tenant?.logo || '/assets/images/sogov.png'}
           h={'40px'}
         />
-        {hasRole('admin') && (
+        {!isMobileOrTablet && hasRole('admin') && (
           <HStack spacing={{ base: '0', md: '6' }}>
             <AdminHeaderContent />
           </HStack>
@@ -116,7 +133,11 @@ const MobileNav = ({ open, ...rest }: MobileProps) => {
                     spacing="1px"
                     ml="2"
                   >
-                    <Text fontSize="sm">{currentUser?.name}</Text>
+                    <Text fontSize="sm">
+                      {enviroment?.id === 2
+                        ? currentUser?.currentPublicAgent?.displayName
+                        : currentUser?.name}
+                    </Text>
                     <Text fontSize="xs" color="gray.600">
                       {enviroment?.name}
                     </Text>
@@ -159,7 +180,7 @@ const MobileNav = ({ open, ...rest }: MobileProps) => {
         <Flex
           ml={{ base: 0, md: 60 }}
           px={{ base: 4, md: 4 }}
-          height="10"
+          height="16"
           alignItems="center"
           bg={'white'}
           justifyContent={{ base: 'space-between', md: 'flex-end' }}
@@ -173,8 +194,8 @@ const MobileNav = ({ open, ...rest }: MobileProps) => {
   )
 }
 
-const Header = ({ open }: MobileProps) => {
-  return <MobileNav open={open} />
+const Header = ({ open, onOpen }: MobileProps) => {
+  return <MobileNav open={open} onOpen={onOpen} />
 }
 
 export default Header

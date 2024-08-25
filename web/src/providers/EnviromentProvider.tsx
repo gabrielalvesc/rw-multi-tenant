@@ -1,7 +1,5 @@
 import { createContext, useEffect, useState } from 'react'
 
-import { useLocation } from '@redwoodjs/router'
-
 interface EnviromentProps {
   id: number
   name: string
@@ -33,32 +31,36 @@ export const ENVIROMENTS = [
     name: 'Cidadão',
     value: 'CITIZEN',
   },
+  {
+    id: 4,
+    name: 'Técnico',
+    value: 'TECHNICAL',
+  },
 ]
 
 export const ENVIROMENTS_VALUE_MAP = {
   ADMIN: 'ADMIN',
   PUBLIC_AGENT: 'PUBLIC_AGENT',
   CITIZEN: 'CITIZEN',
+  TECHNICAL: 'TECHNICAL',
 }
 
 export const ENVIROMENTS_VALUE_INDEX = {
   ADMIN: 0,
   PUBLIC_AGENT: 1,
   CITIZEN: 2,
+  TECHNICAL: 3,
 }
 
-const PATH_KEYS = {
+export const PATH_KEYS = {
   PUBLIC_AGENT: '/servidor',
   ADMIN: 'admin',
   CITIZEN: '/cidadao',
+  TECHNICAL: '/tecnico',
 }
 
 const EnviromentProvider = ({ children }) => {
   const [enviroment, setEnviroment] = useState<EnviromentProps>(null)
-
-  useEffect(() => {
-    console.log(enviroment)
-  }, [enviroment])
 
   useEffect(() => {
     if (window.location.pathname.indexOf(PATH_KEYS.PUBLIC_AGENT) !== -1) {
@@ -73,6 +75,13 @@ const EnviromentProvider = ({ children }) => {
     if (window.location.pathname.indexOf(PATH_KEYS.CITIZEN) !== -1) {
       setEnviroment(
         ENVIROMENTS.find((env) => env.value === ENVIROMENTS_VALUE_MAP.CITIZEN)
+      )
+      return
+    }
+
+    if (window.location.pathname.indexOf(PATH_KEYS.TECHNICAL) !== -1) {
+      setEnviroment(
+        ENVIROMENTS.find((env) => env.value === ENVIROMENTS_VALUE_MAP.TECHNICAL)
       )
       return
     }

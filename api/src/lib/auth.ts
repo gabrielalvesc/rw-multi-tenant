@@ -12,6 +12,8 @@ import { db } from './db'
  */
 export const cookieName = 'session_%port%'
 
+const PUBLIC_AGENT_KEY = '/servidor'
+
 /**
  * The session object sent in as the first argument to getCurrentUser() will
  * have a single key `id` containing the unique ID of the logged in user
@@ -30,7 +32,6 @@ export const cookieName = 'session_%port%'
  * seen if someone were to open the Web Inspector in their browser.
  */
 export const getCurrentUser = async (session: Decoded, _, { event }) => {
-  console.log(session)
   if (!session || typeof session.id !== 'number') {
     throw new Error('Invalid session')
   }
@@ -41,7 +42,16 @@ export const getCurrentUser = async (session: Decoded, _, { event }) => {
       id: true,
       name: true,
       roles: { select: { name: true } },
-      publicAgents: { select: { instanceId: true } },
+      publicAgents: {
+        select: {
+          id: true,
+          userId: true,
+          instanceId: true,
+          displayName: true,
+          lastSectorAccessed: true,
+          sectors: { include: { sector: true } },
+        },
+      },
     },
   })
 
@@ -50,9 +60,20 @@ export const getCurrentUser = async (session: Decoded, _, { event }) => {
   if (domain) {
     const instance = await db.instance.findUnique({ where: { domain } })
     authenticatedUser.currentInstance = instance
+
+    if (
+      (event.headers['referer'] || event.headers['Referer']) &&
+      String(event.headers['referer']).includes(PUBLIC_AGENT_KEY)
+    ) {
+      authenticatedUser.currentPublicAgent =
+        authenticatedUser.publicAgents.find(
+          (pa) => pa.instanceId === instance.id
+        )
+    }
   }
 
   authenticatedUser.roles = authenticatedUser.roles.map((role) => role.name)
+
   console.log(authenticatedUser)
 
   return authenticatedUser

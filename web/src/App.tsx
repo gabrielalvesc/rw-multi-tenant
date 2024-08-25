@@ -14,12 +14,13 @@ import './scaffold.css'
 import './index.css'
 import EnviromentProvider from './providers/EnviromentProvider'
 import TenantProvider from './providers/TenantProvider'
+import { theme } from './theme'
 
 const App = () => (
   <FatalErrorBoundary page={FatalErrorPage}>
     <RedwoodProvider titleTemplate="%PageTitle | %AppTitle">
       <ColorModeScript />
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         <AuthProvider>
           <RedwoodApolloProvider useAuth={useAuth}>
             <TenantProvider>

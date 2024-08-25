@@ -24,6 +24,7 @@ model User {
   hashedPassword         String
   salt                   String
   resetToken             String?
+  cpf                    String?
   resetTokenExpiresAt    DateTime?
   publicAgents           PublicAgent[]
   citizen                Citizen?      @relation(name: "citizenUser")
@@ -32,13 +33,15 @@ model User {
 }
 
 model PublicAgent {
-  id                 Int      @id @default(autoincrement())
+  id                 Int                 @id @default(autoincrement())
   displayName        String
   institutionalEmail String
-  instance           Instance @relation(fields: [instanceId], references: [id])
+  instance           Instance            @relation(fields: [instanceId], references: [id])
   instanceId         Int
-  user               User     @relation(fields: [userId], references: [id])
+  user               User                @relation(fields: [userId], references: [id])
   userId             Int
+  sectors            PublicAgentSector[]
+  lastSectorAccessed Int?
 }
 
 model Instance {
@@ -51,6 +54,8 @@ model Instance {
   citizensCreated Citizen[]
   colorScheme     String        @default("1345AA")
   coatOfArms      String?
+  bannerUrl       String?
+  Sector          Sector[]
 }
 
 model Citizen {
@@ -71,6 +76,47 @@ model Citizen {
   lastAccess           DateTime?
 }
 
+model Sector {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  initials          String
+  description       String?
+  type              SectorType
+  phone             String
+  extension         String
+  isActive          Boolean             @default(true)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @default(now())
+  inativatedAt      DateTime?
+  parentId          Int?
+  parent            Sector?             @relation("SectorsParentChildrens", fields: [parentId], references: [id])
+  children          Sector[]            @relation("SectorsParentChildrens")
+  instanceId        Int
+  instance          Instance            @relation(fields: [instanceId], references: [id])
+  publicAgentSector PublicAgentSector[]
+}
+
+model AccessLevel {
+  id           Int                 @id @default(autoincrement())
+  name         String
+  description  String
+  publicAgents PublicAgentSector[]
+}
+
+model PublicAgentSector {
+  sectorId      Int
+  associatedAt  DateTime     @default(now())
+  isMain        Boolean      @default(false)
+  sector        Sector       @relation(fields: [sectorId], references: [id])
+  office        String?
+  publicAgent   PublicAgent  @relation(fields: [publicAgentId], references: [id])
+  publicAgentId Int
+  accessLevel   AccessLevel? @relation(fields: [accessLevelId], references: [id])
+  accessLevelId Int?
+
+  @@id([publicAgentId, sectorId])
+}
+
 model Role {
   id          Int    @id @default(autoincrement())
   name        String @unique
@@ -81,4 +127,10 @@ model Role {
 enum CitizenType {
   PF
   PJ
+}
+
+enum SectorType {
+  SECTOR
+  CABINET
+  WORK_GROUP
 }

@@ -6,13 +6,14 @@ interface TenantContextProps {
   tenant: TenantProps
 }
 
-interface TenantProps {
+export interface TenantProps {
   id: number
   name: string
   logo: string
   domain: string
   colorScheme: string
   coatOfArms: string
+  bannerUrl: string
 }
 
 export const TenantContext = createContext<TenantContextProps | null>(null)

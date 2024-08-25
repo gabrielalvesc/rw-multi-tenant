@@ -1,0 +1,36 @@
+@font-face {
+  font-family: 'Supply Bold';
+  font-style: normal;
+  font-display: swap;
+  src: url('/assets/fonts/supply/Supply-Bold.otf');
+}
+
+@font-face {
+  font-family: 'Supply Light';
+  font-style: normal;
+  font-display: swap;
+  src: url('/assets/fonts/supply/Supply-Light.otf');
+}
+
+@font-face {
+  font-family: 'Supply Medium';
+  font-style: normal;
+  font-display: swap;
+  src: url('/assets/fonts/supply/Supply-Medium.otf');
+}
+
+@font-face {
+  font-family: 'Supply Regular';
+  font-style: normal;
+  font-display: swap;
+  src: url('/assets/fonts/supply/Supply-Regular.otf');
+}
+
+@font-face {
+  font-family: 'Supply UltraLight';
+  font-style: normal;
+  font-display: swap;
+  src: url('/assets/fonts/supply/Supply-UltraLight.otf');
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');

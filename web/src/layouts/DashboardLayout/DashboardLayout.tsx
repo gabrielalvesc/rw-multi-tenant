@@ -5,29 +5,40 @@ import {
   useColorModeValue,
   Drawer,
   DrawerContent,
-  useDisclosure,
   useBoolean,
+  useDisclosure,
 } from '@chakra-ui/react'
 import { FaCircleChevronLeft, FaCircleChevronRight } from 'react-icons/fa6'
 
-import { usePageLoadingContext } from '@redwoodjs/router'
+import { useLocation, usePageLoadingContext } from '@redwoodjs/router'
 
 import Header from 'src/components/Header/Header'
 import ScreenLoading from 'src/components/ScreenLoading/ScreenLoading'
 import Sidebar from 'src/components/Sidebar/Sidebar'
 import { useEnviroment } from 'src/hooks/useEnviroment'
-import { ENVIROMENTS_VALUE_INDEX } from 'src/providers/EnviromentProvider'
+import {
+  ENVIROMENTS,
+  ENVIROMENTS_VALUE_INDEX,
+  PATH_KEYS,
+} from 'src/providers/EnviromentProvider'
 
 const DashboardLayout = ({ children }) => {
   const [open, setOpen] = useBoolean(true)
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const { loading } = usePageLoadingContext()
 
   const { setEnviroment } = useEnviroment()
 
+  const { pathname } = useLocation()
+
   useEffect(() => {
-    setEnviroment(setEnviroment[ENVIROMENTS_VALUE_INDEX.ADMIN])
-  }, [])
+    if (pathname.indexOf(PATH_KEYS.TECHNICAL) !== -1) {
+      setEnviroment(ENVIROMENTS[ENVIROMENTS_VALUE_INDEX.TECHNICAL])
+      return
+    }
+    setEnviroment(ENVIROMENTS[ENVIROMENTS_VALUE_INDEX.ADMIN])
+  }, [pathname])
 
   return (
     <>
@@ -44,7 +55,7 @@ const DashboardLayout = ({ children }) => {
           borderStyle={'solid'}
           borderWidth={'2px'}
           borderColor={'gray.100'}
-          display={'flex'}
+          display={{ base: isOpen ? 'block' : 'none', md: 'flex' }}
           justifyContent={'center'}
           alignItems={'center'}
           width={'35px'}
@@ -62,14 +73,21 @@ const DashboardLayout = ({ children }) => {
             <FaCircleChevronRight color="#33A8FA" size={'26px'} />
           )}
         </Box>
-        <Drawer placement="left" returnFocusOnClose={false} size="full">
-          <DrawerContent>
-            <Sidebar open={open} />
+        <Drawer
+          id="drawer"
+          isOpen={isOpen}
+          placement="left"
+          returnFocusOnClose={false}
+          size="sm"
+          onClose={onClose}
+        >
+          <DrawerContent id="drawer-content">
+            <Sidebar open={open} onClose={onClose} />
           </DrawerContent>
         </Drawer>
         {/* mobilenav */}
-        <Header open={open} />
-        <Box transition={'1s ease'} ml={{ base: 0, md: open ? 60 : 20 }} p="4">
+        <Header onOpen={onOpen} open={open} />
+        <Box transition={'1s ease'} ml={{ base: 0, md: open ? 60 : 20 }}>
           {/* Content */}
           {children}
         </Box>

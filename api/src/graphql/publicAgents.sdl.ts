@@ -26,6 +26,7 @@ export const schema = gql`
     institutionalEmail: String
     instanceId: Int
     userId: Int
+    lastSectorAccessed: Int
   }
 
   type Mutation {

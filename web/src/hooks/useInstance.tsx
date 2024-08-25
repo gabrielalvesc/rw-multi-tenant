@@ -9,6 +9,7 @@ export const GET_INSTANCE_DOMAIN = gql`
       domain
       colorScheme
       coatOfArms
+      bannerUrl
     }
   }
 `

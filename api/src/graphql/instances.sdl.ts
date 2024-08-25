@@ -8,6 +8,7 @@ export const schema = gql`
     colorScheme: String!
     publicAgents: [PublicAgent]!
     coatOfArms: String
+    bannerUrl: String
   }
 
   type Query {

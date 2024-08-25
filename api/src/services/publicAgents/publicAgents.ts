@@ -24,15 +24,23 @@ export const createPublicAgent: MutationResolvers['createPublicAgent'] = ({
   })
 }
 
-export const updatePublicAgent: MutationResolvers['updatePublicAgent'] = ({
-  id,
-  input,
-}) => {
-  return db.publicAgent.update({
-    data: input,
-    where: { id },
-  })
-}
+export const updatePublicAgent: MutationResolvers['updatePublicAgent'] =
+  async ({ id, input }) => {
+    const instanceId = context.currentUser?.currentInstance?.id
+
+    const publicAgentSaved = await db.publicAgent.findFirst({
+      where: { id, instanceId },
+    })
+
+    if (!publicAgentSaved) {
+      throw new Error('Servidor não encontrado')
+    }
+
+    return db.publicAgent.update({
+      data: input,
+      where: { id },
+    })
+  }
 
 export const deletePublicAgent: MutationResolvers['deletePublicAgent'] = ({
   id,

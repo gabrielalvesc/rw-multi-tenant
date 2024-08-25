@@ -64,7 +64,11 @@ const AdminHeaderContent = () => {
   }
 
   return (
-    <Box display={'flex'} flexDirection={'row'} gap={'8px'}>
+    <Box
+      display={'flex'}
+      flexDirection={'row'}
+      gap={{ base: '4px', md: '8px' }}
+    >
       <Button
         as={Button}
         onClick={handleClickAdmin}
@@ -73,7 +77,7 @@ const AdminHeaderContent = () => {
         fontWeight={500}
         colorScheme="blue"
         variant="ghost"
-        fontSize={'14px'}
+        fontSize={{ base: '12px', md: '14px' }}
       >
         Administrativo
       </Button>
@@ -86,7 +90,7 @@ const AdminHeaderContent = () => {
         isActive={isActive('/tecnico')}
         _active={{ backgroundColor: 'blue.50', fontWeight: 600 }}
         fontWeight={500}
-        fontSize={'14px'}
+        fontSize={{ base: '12px', md: '14px' }}
       >
         Técnico
       </Button>
@@ -99,7 +103,7 @@ const AdminHeaderContent = () => {
         isActive={isActive('/external')}
         _active={{ backgroundColor: 'blue.50', fontWeight: 600 }}
         fontWeight={500}
-        fontSize={'14px'}
+        fontSize={{ base: '12px', md: '14px' }}
       >
         Externo
       </Button>
@@ -112,7 +116,7 @@ const AdminHeaderContent = () => {
           rightIcon={<IoChevronDownOutline />}
           fontWeight={isActive('/servidor') ? 600 : 500}
           backgroundColor={isActive('/servidor') ? 'blue.50' : 'transparent'}
-          fontSize={'14px'}
+          fontSize={{ base: '12px', md: '14px' }}
         >
           {selectedTenant ? selectedTenant.name : 'Clientes'}
         </MenuButton>

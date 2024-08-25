@@ -187,7 +187,7 @@ export const handler = async (
     // client when invoking a handler that returns a user (like forgotPassword
     // and signup). This list should be as small as possible to be sure not to
     // leak any sensitive information to the client.
-    allowedUserFields: ['id', 'email'],
+    allowedUserFields: ['id', 'email', 'cpf'],
 
     // Specifies attributes on the cookie that dbAuth sets in order to remember
     // who is logged in. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies
@@ -225,10 +225,34 @@ class AuthHandlerSogo extends DbAuthHandler<unknown> {
 
     const { username, password, tenantId, type } = bodyContent
 
-    const user = await db.user.findUnique({
-      where: { email: username },
-      include: { publicAgents: true, roles: true },
-    })
+    const field = getFieldCompareLogin(username)
+
+    let user = null
+    let login = username
+
+    if (field === LOGIN_FIELDS.CPF || LOGIN_FIELDS.CNPJ) {
+      login = username.replace(/\D/g, '')
+    }
+
+    if (field === LOGIN_FIELDS.CNPJ) {
+      user = await db.user.findFirst({
+        where: {
+          citizen: {
+            cnpj: login,
+          },
+        },
+        include: { publicAgents: true, roles: true },
+      })
+    } else {
+      user = await db.user.findFirst({
+        where: { [field]: login },
+        include: { publicAgents: true, roles: true },
+      })
+    }
+
+    if (!user) {
+      throw new Error('Dados inválidos')
+    }
 
     console.log(user)
 
@@ -278,4 +302,30 @@ class AuthHandlerSogo extends DbAuthHandler<unknown> {
     const handlerUser = await this.options.login.handler(user)
     return this._loginResponse(handlerUser)
   }
+}
+
+export const LOGIN_FIELDS = {
+  EMAIL: 'email',
+  CPF: 'cpf',
+  CNPJ: 'cnpj',
+}
+
+export const isEmail = (value) => {
+  return value.match(
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  )
+}
+
+export const isCpf = (value) => {
+  return value.replace(/\.|-/g, '').length === 11
+}
+
+export const isCnpj = (value) => {
+  return value.length === 14
+}
+
+export const getFieldCompareLogin = (value) => {
+  if (isEmail(value)) return LOGIN_FIELDS.EMAIL
+  else if (isCpf(value)) return LOGIN_FIELDS.CPF
+  else return LOGIN_FIELDS.CNPJ
 }
